@@ -9,13 +9,14 @@ socket.on('disconnect', () => {
     console.log('disconnected from server...');
 });
 
-socket.on('welcomeUser', (message) => {
-    console.log('you got a message::', message);
-
-
+socket.on('welcome', (message) => {
+    console.log('welcome message ::', message);
 });
 
 socket.on('newMessage', (message) => {
     console.log('you got a new message', message);
 });
 
+socket.on('newUserJoined', (message) => {
+    console.log('new user joined:::', message)
+});

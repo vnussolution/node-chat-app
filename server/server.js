@@ -31,9 +31,18 @@ io.on('connection', (socket) => {
         console.log('user disconnected.....');
     });
 
+    socket.emit('welcome', { from: 'Admin', text: 'welcome to chat app' });
+
+    socket.broadcast.emit('newUserJoined', { from: 'Admin', text: `new user has joined chat app`, createdAt: new Date().getTime() });
+
     socket.on('createMessage', (message) => {
         console.log('createMessage :', message);
-        io.emit('newMessage', { from: message.from, text: message.text, createdAt: new Date().getTime() });
+        //io.emit  method sends to all listeners
+        //io.emit('newMessage', { from: message.from, text: message.text, createdAt: new Date().getTime() });
+        socket.broadcast.emit('newMessage', // this method only broadcasts to others not sender
+            { from: message.from, text: message.text, createdAt: new Date().getTime() }
+        );
+
     });
 
     // socket.emit('newMessage', { from: 'SERVER', text: 'Welcome to Node.js server', createdAt: new Date().toString() });
