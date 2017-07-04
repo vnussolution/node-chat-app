@@ -37,14 +37,14 @@ io.on('connection', (socket) => {
 
     socket.broadcast.emit('newUserJoined', generateMessage('Admin', `new user has joined chat app`));
 
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
         console.log('createMessage :', message);
         //io.emit  method sends to all listeners
         //io.emit('newMessage', generateMessage(message.from, messsage.text));
 
         // this method only broadcasts to others not sender
-        socket.broadcast.emit('newMessage', generateMessage(message.from, messsage.text));
-
+        socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
+        callback('this is from server');
     });
 
     // socket.emit('newMessage', { from: 'SERVER', text: 'Welcome to Node.js server', createdAt: new Date().toString() });

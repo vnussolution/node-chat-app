@@ -10,13 +10,30 @@ socket.on('disconnect', () => {
 });
 
 socket.on('welcome', (message) => {
-    console.log('welcome message ::', message);
+    var li = $('<li></li>');
+    li.text(`${message.from} : ${message.text}`);
+    $('#messages').append(li);
 });
 
 socket.on('newMessage', (message) => {
     console.log('you got a new message', message);
+
+    var li = $('<li></li>');
+    li.text(`${message.from} : ${message.text}`);
+    $('#messages').append(li);
 });
 
 socket.on('newUserJoined', (message) => {
-    console.log('new user joined:::', message)
+    var li = $('<li></li>');
+    li.text(`${message.from} : ${message.text}`);
+    $('#messages').append(li);
+});
+
+
+$('#message-form').on('submit', (e) => {
+    e.preventDefault();
+
+    socket.emit('createMessage', { from: 'Uer', text: $('#inputMessage').val() }, (data) => {
+        console.log('got it::', data);
+    });
 });
