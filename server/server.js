@@ -13,7 +13,7 @@ var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 
-const { generateMessage } = require('./utils/message');
+const { generateMessage, generateLocationMessage } = require('./utils/message');
 
 app.use(express.static(publicPath));
 app.use((req, res, next) => {
@@ -47,7 +47,10 @@ io.on('connection', (socket) => {
         callback('this is from server');
     });
 
-    // socket.emit('newMessage', { from: 'SERVER', text: 'Welcome to Node.js server', createdAt: new Date().toString() });
+    socket.on('createLocationMessage', (coords) => {
+        io.emit('locationMessage', generateLocationMessage('Admin', coords.lat, coords.long));
+    });
+
 });
 
 server.listen(PORT, () => console.log(`server is up on port: ${PORT}`));
