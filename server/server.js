@@ -33,10 +33,10 @@ io.on('connection', (socket) => {
 
     socket.on('createMessage', (message) => {
         console.log('createMessage :', message);
-
+        io.emit('newMessage', { from: message.from, text: message.text, createdAt: new Date.getTime() });
     });
 
-    socket.emit('newMessage', { from: 'SERVER', text: 'Welcome to Node.js server', createdAt: new Date().toString() });
+    // socket.emit('newMessage', { from: 'SERVER', text: 'Welcome to Node.js server', createdAt: new Date().toString() });
 });
 
 server.listen(PORT, () => console.log(`server is up on port: ${PORT}`));
