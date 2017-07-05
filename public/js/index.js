@@ -19,7 +19,9 @@ socket.on('newMessage', (message) => {
     console.log('you got a new message', message);
 
     var li = $('<li></li>');
-    li.text(`${message.from} : ${message.text}`);
+    var formatedTime = moment(message.createdAt).format('h:mm a');
+
+    li.text(`${message.from} : ${formatedTime}: ${message.text}`);
     $('#messages').append(li);
 });
 
@@ -58,7 +60,8 @@ locationButton.on('click', () => {
 socket.on('locationMessage', (message) => {
     var li = $('<li></li>');
     var a = $('<a target="_blank"> My current location </a>')
-    li.text(`${message.from} : `);
+    var formatedTime = moment(message.createdAt).format('h:mm a');
+    li.text(`${message.from} : : ${formatedTime} : `);
     a.attr('href', message.url);
     li.append(a);
     $('#messages').append(li);
