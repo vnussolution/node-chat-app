@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
         //io.emit('newMessage', generateMessage(message.from, messsage.text));
 
         // this method only broadcasts to others not sender
-        socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
+        socket.emit('newMessage', generateMessage(message.from, message.text));
         callback('this is from server');
     });
 
