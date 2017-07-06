@@ -11,20 +11,23 @@ function scrollToBottom() {
     var newMessageHeight = newMessage.innerHeight();
     var lastMessageHeight = newMessage.prev().innerHeight();
 
-    console.log(`clientHeight : ${clientHeight} , scrollTop: ${scrollTop}, scrollHeight: ${scrollHeight}, newMessageHeight: ${newMessageHeight}, lastMessageHeight: ${lastMessageHeight}`)
-
+    //console.log(`clientHeight : ${clientHeight} , scrollTop: ${scrollTop}, scrollHeight: ${scrollHeight}, newMessageHeight: ${newMessageHeight}, lastMessageHeight: ${lastMessageHeight}`)
 
     if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight)
         messages.scrollTop(scrollHeight);
-
-
-
 }
 
 socket.on('connect', () => {
-    console.log('connected to server');
+    var params = $.deparam(window.location.search);
+    socket.emit('join', params, (err) => {
+        if (err) {
+            alert(err);
+            window.location.href = '/';
+        } else {
+            // console.log('No error');
+        }
+    });
 
-    //socket.emit('createMessage', { from: 'CLIENT--', text: ' hi everyone here ' });
 });
 
 socket.on('disconnect', () => {
@@ -82,14 +85,6 @@ locationButton.on('click', () => {
 });
 
 socket.on('locationMessage', (message) => {
-    // var li = $('<li></li>');
-    // var a = $('<a target="_blank"> My current location </a>')
-    // var formatedTime = moment(message.createdAt).format('h:mm a');
-    // li.text(`${message.from} : : ${formatedTime} : `);
-    // a.attr('href', message.url);
-    // li.append(a);
-    // $('#messages').append(li);
-
     var formatedTime = moment(message.createdAt).format('h:mm a');
     var template = $('#message-location-template').html();
     var html = Mustache.render(template, {
@@ -99,4 +94,13 @@ socket.on('locationMessage', (message) => {
     });
     $('#messages').append(html);
     scrollToBottom();
+});
+
+socket.on('updateUserList', (users) => {
+    var ol = $('<ol></ol>');
+    users.forEach((user) => {
+        ol.append($('<li></li>').text(user));
+    });
+    $('#users').html(ol);
+    console.log('update user list', users);
 });

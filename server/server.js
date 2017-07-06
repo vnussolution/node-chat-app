@@ -7,11 +7,15 @@ const fs = require('fs');
 const socketIO = require('socket.io');
 
 
+const { isRealString } = require('./utils/validation')
+const { Users } = require('./utils/users');
+
 const PORT = process.env.PORT || 3000;
 
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
+var users = new Users();
 
 const { generateMessage, generateLocationMessage } = require('./utils/message');
 
@@ -30,12 +34,38 @@ io.on('connection', (socket) => {
     console.log('New user connected');
 
     socket.on('disconnect', () => {
-        console.log('user disconnected.....');
+        var user = users.removeUser(socket.id);
+
+        if (user) {
+            console.log('disconnect', user.name);
+
+            io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+            io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
+        }
     });
 
-    socket.emit('welcome', generateMessage('Admin', 'welcome to chat app'));
+    socket.on('join', (params, callback) => {
+        if (!isRealString(params.name) || !isRealString(params.room)) {
+            return callback('name and room are required');
+        }
 
-    socket.broadcast.emit('newUserJoined', generateMessage('Admin', `new user has joined chat app`));
+        socket.join(params.room);
+        users.removeUser(socket.id);// remove existing user, just to be safe
+        users.addUser(socket.id, params.name, params.room);
+        io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+
+
+        //socket.leave('the office fans');
+
+        //io.emit -> io.to('the office fans').emit
+        //socket.broadcast.emit -> socket.broadcast.to('the office fans').emit
+        socket.emit('newMessage', generateMessage('Admin', 'welcome to chat app'));
+
+        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
+
+
+        callback();
+    });
 
     socket.on('createMessage', (message, callback) => {
         console.log('createMessage :', message);
@@ -43,7 +73,7 @@ io.on('connection', (socket) => {
         //io.emit('newMessage', generateMessage(message.from, messsage.text));
 
         // this method only broadcasts to others not sender
-        socket.emit('newMessage', generateMessage(message.from, message.text));
+        io.emit('newMessage', generateMessage(message.from, message.text));
         callback('this is from server');
     });
 
@@ -54,3 +84,6 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => console.log(`server is up on port: ${PORT}`));
+
+
+socketIO.apply()
