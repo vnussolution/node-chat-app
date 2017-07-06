@@ -62,7 +62,7 @@ socket.on('newUserJoined', (message) => {
 $('#message-form').on('submit', (e) => {
     e.preventDefault();
     var messageTextbox = $('#inputMessage');
-    socket.emit('createMessage', { from: 'Uer', text: messageTextbox.val() }, (data) => {
+    socket.emit('createMessage', { text: messageTextbox.val() }, (data) => {
         messageTextbox.val('');
     });
 });

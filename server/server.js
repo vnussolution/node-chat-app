@@ -56,7 +56,6 @@ io.on('connection', (socket) => {
 
 
         //socket.leave('the office fans');
-
         //io.emit -> io.to('the office fans').emit
         //socket.broadcast.emit -> socket.broadcast.to('the office fans').emit
         socket.emit('newMessage', generateMessage('Admin', 'welcome to chat app'));
@@ -68,17 +67,21 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createMessage', (message, callback) => {
-        console.log('createMessage :', message);
-        //io.emit  method sends to all listeners
-        //io.emit('newMessage', generateMessage(message.from, messsage.text));
+        var user = users.getUser(socket.id);
 
-        // this method only broadcasts to others not sender
-        io.emit('newMessage', generateMessage(message.from, message.text));
+        if (user && isRealString(message.text)) {
+            io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+
+        }
+
         callback('this is from server');
     });
 
     socket.on('createLocationMessage', (coords) => {
-        io.emit('locationMessage', generateLocationMessage('Admin', coords.lat, coords.long));
+        var user = users.getUser(socket.id);
+        if (user) {
+            io.to(user.room).emit('locationMessage', generateLocationMessage(user.name, coords.lat, coords.long));
+        }
     });
 
 });
