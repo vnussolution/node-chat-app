@@ -11,23 +11,33 @@
 
     <body class="centered-form">
         <div class="centered-form__form">
-            <form action="/chat.html">
+            <form>
                 <div class="form-field">
                     <h3>Join a chat</h3>
                 </div>
                 <div class="form-field">
                     <label for="name">Display name</label>
-                    <input type="text" name="name" autofocus>
+                    <input id="name" type="text" name="name" autofocus>
+                    <span id="duplicateName">Name is duplicate</span>
                 </div>
                 <div class="form-field">
                     <label for="room">Room name</label>
-                    <input type="text" name="room">
+                    <input type="text" name="room" id="roomName" placeholder="name your room">
                 </div>
                 <div class="form-field">
-                    <button>Join</button>
+                    <div id="dropdownlist"></div>
+                </div>
+                <div class="form-field">
+                    <button id="join">Join</button>
+                </div>
+                <div class="form-field">
+                    <span id="emptyNameRoom">Name and Room are required.</span>
                 </div>
             </form>
         </div>
     </body>
+    <script src='/socket.io/socket.io.js'></script>
+    <script src='/js/libs/jquery-3.2.1.min.js'></script>
+    <script src='/js/index.js'></script>
 
 </html>

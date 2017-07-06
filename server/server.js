@@ -54,11 +54,10 @@ io.on('connection', (socket) => {
         users.addUser(socket.id, params.name, params.room);
         io.to(params.room).emit('updateUserList', users.getUserList(params.room));
 
-
         //socket.leave('the office fans');
         //io.emit -> io.to('the office fans').emit
         //socket.broadcast.emit -> socket.broadcast.to('the office fans').emit
-        socket.emit('newMessage', generateMessage('Admin', 'welcome to chat app'));
+        socket.emit('newMessage', generateMessage('Admin', `welcome to chat app : ROOM:${params.room}`));
 
         socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
 
@@ -82,6 +81,17 @@ io.on('connection', (socket) => {
         if (user) {
             io.to(user.room).emit('locationMessage', generateLocationMessage(user.name, coords.lat, coords.long));
         }
+    });
+
+    socket.on('checkNameExist', (name, callback) => {
+        if (users.checkNameExist(name).length > 0) {
+            return callback(true);
+        }
+        callback(false);
+    })
+
+    socket.on('getRoomList', (callback) => {
+        callback(users.getRoomList());
     });
 
 });
