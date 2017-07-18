@@ -3,7 +3,7 @@
     $('#join').on('click', (e) => {
         e.preventDefault();
         var name = $('#name').val().toLowerCase();
-        var room = $('#myselect').val().toLowerCase();
+        var room = $('#myselect').val();
         var roomName = $('#roomName').val().toLowerCase().trim();
         // var message = $('ErrorMessage');
 
